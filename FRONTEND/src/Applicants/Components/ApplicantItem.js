@@ -1,18 +1,17 @@
 import React from 'react';
+import { Typography, Card, ListItem, Divider } from '@mui/material';
 
-import './ApplicantItem.css';
-import { Card } from '../../Shared/components/UIElements/Card';
 
 export const ApplicantItem = props => {
   return (
-    <li className='applicant-item'>
-        <Card className='applicant-item__content'>
-            <div className="applicant-item__info">
-                <h3> <span className="applicant-item-info__heading"> Name: </span> &nbsp;{props.name} </h3>
-                <h3> <span className="applicant-item-info__heading"> Surname: </span> &nbsp;{props.surname} </h3>
-                <h3> <span className="applicant-item-info__heading"> Age: </span> &nbsp;{props.age} </h3>
-            </div>
-        </Card>
-    </li>
+    <ListItem>
+      <Card elevation={3} sx={{width: '90%', height: 150, padding: 3}} >
+        <Typography variant='h6'>  Name: &nbsp;{props.name}  </Typography> 
+        <Divider/>
+        <Typography variant='h6'>  Surname:  &nbsp;{props.surname} </Typography>
+        <Divider />
+        <Typography variant='h6'>  Age: &nbsp;{props.age} </Typography>
+      </Card>
+    </ListItem>
   )
 };

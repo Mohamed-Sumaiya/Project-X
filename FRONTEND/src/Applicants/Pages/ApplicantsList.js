@@ -1,10 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Button, Container, List, Typography, Card } from '@mui/material';
 
-import './ApplicantsList.css';
 import { ApplicantItem } from '../Components/ApplicantItem';
-import { Card } from '../../Shared/components/UIElements/Card';
-import { Button } from '../../Shared/components/FormElements/Button';
+
 
 const ApplicantsList = () => {
 
@@ -21,34 +19,49 @@ const ApplicantsList = () => {
       name: "Stephen",
       surname: "Ngago",
       age: 21
+    },
+
+    {
+      name: "Kyle",
+      surname: "Leon",
+      age: 21
+    },
+
+    {
+      name: "Stephany",
+      surname: "Williams",
+      age: 21
     }
   ]
 
   if(!DUMMY_APPLICANTS || DUMMY_APPLICANTS.length === 0){
     return (
-      <Card>
-        <h1> No applicants</h1>
+      <Card elevation='3' sx={{marginTop: 20, margin: 10, textAlign: 'center'}}>
+        <h1> No applicants available</h1>
       </Card>
     )
   }
 
    return(
     <>
-      <ul className="applicants-list">
+      <List sx={{marginTop: 10, marginLeft: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         {DUMMY_APPLICANTS.map( ( applicant, index ) => 
           ( 
-            <ApplicantItem 
-             key={index}
-             name={applicant.name}
-             surname={applicant.surname}
-             age={applicant.age}
-            />
+            <Container sx={{marginTop: 1}}  key={index}>
+              <ApplicantItem 
+               name={applicant.name}
+               surname={applicant.surname}
+               age={applicant.age}
+              />
+            </Container>
           )
         )}
-      </ul>
-      <Button className="applicants-add-butn">
-        <Link to="/"> ADD </Link>
+      </List>
+      <Container sx={{display: 'flex', justifyContent: "center", marginTop: 2}}>
+      <Button href="/" color="primary" >
+        <Typography color="primary"> ADD </Typography>
       </Button>
+      </Container>
     </>
    )
 };
