@@ -22,7 +22,7 @@ export const Layout = props => {
       setDrawerIsOpen(false)
     };
 
-    if(auth.isLoggedIn){
+    if(auth.token){
         navItems = [
         {
             text: 'New Form',
@@ -31,7 +31,7 @@ export const Layout = props => {
     ]
     }
 
-    const isAdmin = auth.isLoggedIn && (auth.role.trim().toLowerCase() === 'admin' || auth.role.trim().toLowerCase() === 'administrator');  // wrapped the role checks in parenthesis to ensure that they are evaluated together.
+    const isAdmin = auth.token && auth.role === 'admin' || auth.role === 'administrator'
 
     if(isAdmin) {
         navItems = [
@@ -54,7 +54,7 @@ export const Layout = props => {
             }
         ]
     }
-    if(!auth.isLoggedIn){
+    if(!auth.token){
         navItems = [
             {
                 text: 'Authenticate',
@@ -66,7 +66,10 @@ export const Layout = props => {
             }
         ]
     }
-
+   
+    const handleLogOut = () => {
+      auth.logOut(auth.userId);
+    };
     
   return (
     <Box>
@@ -99,7 +102,11 @@ export const Layout = props => {
                     </ListItemButton>
                   </ListItem>
                ))}
+                <Button onClick={handleLogOut}>
+                 <Typography> Log Out</Typography>
+              </Button>
               </Box>
+             
           </Toolbar>
         </AppBar>
         <Drawer 
@@ -128,6 +135,9 @@ export const Layout = props => {
                 </ListItem>
               ))}
            </List>
+           <Button onClick={handleLogOut}>
+                 <Typography> Log Out</Typography>
+              </Button>
         </Box>
         </Drawer>
          {props.children}
