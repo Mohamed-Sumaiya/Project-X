@@ -1,6 +1,6 @@
 import React, {useState, useContext} from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Typography, Box, Card, Button, CardHeader, Divider, CardContent } from '@mui/material';
+import { Typography, Box, Card, Button, CardHeader, Divider, CardContent, Container } from '@mui/material';
 
 import { AuthContext } from '../../Shared/context/authenticate-context';
 
@@ -10,7 +10,7 @@ const DeleteApplicant = () => {
     const [error, setError] = useState();
     
     const applicantId = useParams().applicantId;
-    
+
     let response;
 
     const handleDelete = async (event) => {
@@ -26,9 +26,14 @@ const DeleteApplicant = () => {
         
          const responseData = await response.json();
 
+         if(response.ok){
+            auth.SetIsDeleted(true)
+         }
+
          if(!response.ok){
             setError(responseData.message)
          }
+
        } catch (err) {
           setError('Something went wrong , could not delete applicant data.')
        }
@@ -37,7 +42,7 @@ const DeleteApplicant = () => {
     }
 
     return (
-        <Box sx={{marginTop: 25, width: '70%', marginLeft: 12}}>
+        <Container sx={{ width: '70%', display: 'flex', marginTop: 24, justifyContent: 'center', alighnItems: 'center'}}>
             <Card elevation={3} sx={{padding: 3, textAlign: 'center' }}>
                 <CardHeader title={<Typography variant="h4" color="error"> Deletion in progress.. </Typography>} />
                 <Divider />
@@ -52,7 +57,7 @@ const DeleteApplicant = () => {
                 </Box>
                </CardContent>
             </Card>
-        </Box>
+        </Container>
     )
 }
 

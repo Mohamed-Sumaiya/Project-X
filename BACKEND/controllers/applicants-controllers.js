@@ -62,11 +62,12 @@ const getApplicantOrgInfo = async (req, res, next) => {
 const createApplicant = async (req, res, next) => { 
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
-    const error = new HttpError('Invalid data passed, please check your inputs.', 422);
+    const error = new HttpError('Invalid, please check your inputs!', 422);
     return next(error);
    }
 
    const { name, surname, age } = req.body;
+
    
    // new applicant.
    const createdApplicant =  new Applicant(
@@ -78,7 +79,6 @@ const createApplicant = async (req, res, next) => {
       }
    );
 
-   let applicant;
    try{
      await createdApplicant.save() // save the document using the schema(model).
    } catch (err) {
@@ -119,6 +119,7 @@ const updateApplicant = async (req, res, next) => {
       await applicant.save();
     } catch (err) {
       const error = new HttpError('Could not save the updated applicant data.', 500 );
+      return next(error)
     }
 
     res.status(200).json({ applicant: applicant.toObject({ getters: true })}); // Convert the mongoose object to a normal javascript object.

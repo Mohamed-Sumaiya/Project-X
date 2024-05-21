@@ -38,7 +38,7 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
-// Connect to database.
+// Connect to applicants database.
 mongoose
   .connect('mongodb+srv://sumaiya_mohamed:uDIhEp6hGME5bb4C@clusterx.lnpzbbz.mongodb.net/database-x?retryWrites=true&w=majority&appName=ClusterX')
   .then(() => {

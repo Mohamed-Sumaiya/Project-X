@@ -2,6 +2,7 @@ const jwtoken = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
+const  User = require('../models/user-schema');
 
 const DUMMY_USERS = [
     {
@@ -50,6 +51,7 @@ const login = async (req, res, next) => {
       return next(error);
     }
 
+
     // Now that we know that the user exists and the password is correct we can generate a token.
     let token;
 
@@ -62,7 +64,7 @@ const login = async (req, res, next) => {
     try {
       token = jwtoken.sign( payload, 'super_secret_key');
     } catch (err) {
-      const error = new HttpError('Could not generate a token for user on login, please try again', 500);
+      const error = new HttpError('Could not generate a token for user on login, please try again later', 500);
       return next(error);
     }
     

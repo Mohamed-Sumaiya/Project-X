@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { Card, CardHeader, Typography, Divider, Box,TextField, Button, ButtonGroup } from '@mui/material';
+import { Card, CardHeader, Typography, Divider, Box,TextField, Button, Slide} from '@mui/material';
 import { blue } from '@mui/material/colors';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import { AuthContext } from '../../Shared/context/authenticate-context';
 
 const UpdateApplicant = () => {
     const auth = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [showNameError, setShowNameError] = useState(false);
     const [showSurnameError, setShowSurnameError] = useState(false);
     const [showAgeError, setShowAgeError] = useState(false);
-    const [isFormValid, setIsFormValid] = useState(false);
     const [isFormSubmitted, setIsFormSubmitted] = useState(false);
     const [error, setError] = useState("");
     const [loadedApplicant, setLoadedApplicant] = useState();
@@ -40,7 +41,6 @@ const UpdateApplicant = () => {
 
              const responseData = await response.json()
              setLoadedApplicant(responseData.applicant);
-             console.log(responseData.applicant)
           } catch (err) {
             setError('Something went wrong could not find applicant original information.')
           }
@@ -56,28 +56,10 @@ const UpdateApplicant = () => {
  
     const handleSubmit = async (event) => {
        event.preventDefault();
- 
-       if(formData.name.length === 0){
-         setShowNameError(true);
-       }
- 
-       if(formData.surname.length  === 0){
-         setShowSurnameError(true);
-       }
- 
-       if(formData.age.length  === 0){
-         setShowAgeError(true);
-       }
- 
-       if(showNameError === false && showSurnameError === false && showAgeError === false){
-         setIsFormValid(true)
-       }
- 
-       if(isFormValid === true){
-         setIsFormSubmitted(true)
+       setIsFormSubmitted(true)
 
          try {
-           await fetch(`http://localhost:5000/api/applicants/${applicantId}`,
+          const response = await fetch(`http://localhost:5000/api/applicants/${applicantId}`,
             { 
               method: 'PATCH',
               headers: {
@@ -91,10 +73,18 @@ const UpdateApplicant = () => {
              })
             }
            )
+           const responseData = await response.json();
+            if(!response.ok) {
+            setError(responseData.message || 'Unknown error occurred!');
+            }
+
+            if(response.ok){
+              navigate('/applicants');
+            }
+
          } catch (error) {
           setError('Something went wrong could not update applicant data.')
          }
-       }
     };
 
     return (
@@ -150,12 +140,21 @@ const UpdateApplicant = () => {
               placeholder={loadedApplicant && loadedApplicant.age.toString()}
             />
              <br/>
+             {error && 
+             <Slide direction="right" in={!!error} mountOnEnter unmountOnExit>
+                <Card elevation={0} sx={{ width: {xs: '70%', md: '75%'}, backgroundColor: 'rgba(255, 0, 0, 0.1)', padding: 1, display: 'flex', marginTop: 2, height: '40px' }}>
+                  <ErrorOutlineIcon color="error"/>
+                  <Typography sx={{ marginLeft: 1}}> {error} </Typography>
+                </Card>
+             </Slide>
+           }
              <Box variant="text" sx={{display: 'flex', justifyContent: "space-evenly", padding: 1}}>
                 <Link to="/applicants"> 
                  <Button color="primary">
                    cancel
                  </Button>
                 </Link>
+                
                <Button type="submit" color="primary">
                    submit
                </Button>
@@ -163,6 +162,7 @@ const UpdateApplicant = () => {
             </Box>
           </form>
         </ Card>
+        
        </div>
      
     )

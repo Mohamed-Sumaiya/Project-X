@@ -1,10 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardHeader,Typography, Divider, Box, Container, Button, TextField } from '@mui/material';
+import { Card, CardHeader,Typography, Divider, Box, Container, Button, TextField, Slide } from '@mui/material';
 import { blue } from '@mui/material/colors';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 import { AuthContext } from '../../Shared/context/authenticate-context';
-import { Users } from '../../Shared/utils/Users';
+
 
 const Authenticate = () => {
   const auth = useContext(AuthContext);
@@ -13,7 +14,6 @@ const Authenticate = () => {
   const [emailErrorMessage, setEmailErrorMessage] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
-  const [formIsValid, setFormIsValid] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [ formData, setFormData ] = useState({
@@ -28,34 +28,7 @@ const Authenticate = () => {
     return emailRegex.test(email);
   };
 
-/*  const handleValidation = (user, email, password) => {
 
-    if(!user && formSubmitted === true){
-      setEmailError(true)
-      setEmailErrorMessage('User does not exist.');
-      return
-    }
-
-    if(!user){
-      setEmailError(true);
-      setEmailErrorMessage('Please enter your email.');
-      return
-    }
-
-    if(user.password !== password){
-      setPasswordError(true);
-      setPasswordErrorMessage('Incorrect Password!')
-      return
-    } 
-
-    if( user.email === email  && user.password === password ){
-      setFormIsValid(true);
-    } else {
-      setFormIsValid(false);
-    }
-  
-  };
- */ 
   const handleInputChange = event => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
@@ -86,31 +59,23 @@ const Authenticate = () => {
         
          const responseData = await response.json();
          if(!response.ok){
-           setError(responseData.error || 'Unknown error occurred!');
+           setError(responseData.message || 'Unknown error occurred!');
          }
          
-        // handleValidation(responseData, formData.email, formData.password)
-            //auth.authRole(responseData.user.role);
-            auth.logIn(responseData.user.id, responseData.token, responseData.user.role);
-             console.log(responseData.user.id, responseData.token, responseData.user.role)
-            navigate('/');
+        auth.logIn(responseData.user.id, responseData.token, responseData.user.role);
+        console.log(responseData.user.id, responseData.token, responseData.user.role)
+        navigate('/');
        } catch (err) {
-          setError("Something went wrong, could not log you in.")
+          setError("Please check your credentials and try again.")
        }
     
   };
 
-
+  
 
   return (
     <div>
-       {error && 
-         <Card>
-            <Typography variant="h5"> {error} </Typography>
-         </Card>
-       }
-       {!error && 
-         <Card sx={{ marginTop: 18, marginLeft: '7.5%', border: 'solid', borderWidth: 2, borderColor: blue[500], width: '85%', height: 350}} >
+         <Card  sx={{ height: {xs: '390px', lg: '395px'} ,marginTop: 18, marginLeft: '7.5%', border: 'solid', borderWidth: 2, borderColor: blue[500], width: '85%'}} >
          <CardHeader 
            title= {
                <Typography variant="h4"> Log In Required</Typography>
@@ -147,7 +112,16 @@ const Authenticate = () => {
              onChange={handleInputChange}
            />
            
-           <Container sx={{marginTop: 3, display: 'flex', justifyContent: 'center'}}>
+           {error && 
+             <Slide direction="right" in={!!error} mountOnEnter unmountOnExit>
+                <Card elevation={0} sx={{ width: {xs: '95%', md: '85%'}, backgroundColor: 'rgba(255, 0, 0, 0.1)', paddingLeft: 1, display: 'flex', marginTop: 2, }}>
+                  <ErrorOutlineIcon color="error"/>
+                  <Typography sx={{ marginLeft: 1}}> {error} </Typography>
+                </Card>
+             </Slide>
+           }
+
+           <Container sx={{marginTop: 5, display: 'flex', justifyContent: 'center'}}>
               <Button type="submit" variant="contained">
                 Log In
               </Button>
@@ -156,7 +130,6 @@ const Authenticate = () => {
          </form>
        </Card>
        
-       }
     </div>
   )
 };
